@@ -1,57 +1,255 @@
-footer {
-  a {
-    text-decoration: none;
-  }
+/* Footer — extremenetworks.com rebuild: brand navy panel, link columns that
+   collapse into accordions on mobile, legal + copyright bottom bar. */
 
-  .footer-content {
-    max-width: var(--grid-container-width);
-    margin: 48px auto;
-    font-size: 14px;
-  }
+footer.footer {
+  --footer-bg: #101b37;            /* brand navy */
+  --footer-text: #fff;
+  --footer-muted: rgb(255 255 255 / 72%);
+  --footer-heading: #d7d2cb;       /* brand sand */
+  --footer-line: rgb(255 255 255 / 16%);
+  --footer-accent: #89c6cc;        /* brand light teal — hover */
+  --footer-pad: clamp(24px, 5vw, 64px);
+  --footer-font: "DM Sans", montserrat, arial, sans-serif;
 
-  .section-legal ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .section-copyright p {
-    margin: 0;
-  }
-
-  .section {
-    .default-content {
-      max-width: initial;
-      margin: initial;
-    }
-  }
+  display: block;
+  background: var(--footer-bg);
+  color: var(--footer-text);
+  font-family: var(--footer-font);
 }
 
-@media (width >= 900px) {
-  footer {
-    margin: 0;
+footer.footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+footer.footer li { margin: 0; }
+footer.footer p { margin: 0; }
 
-    .section-legal {
-      display: flex;
-      justify-content: end;
-      gap: var(--spacing-xl);
-      margin-bottom: 24px;
+footer.footer a {
+  color: inherit;
+  text-decoration: none;
+}
 
-      ul {
-        display: flex;
-        justify-content: end;
-        gap: var(--spacing-xl);
-      }
+footer.footer .footer-content {
+  box-sizing: border-box;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(32px, 5vw, 56px) var(--footer-pad) 24px;
+}
 
-      li {
-        margin: 0;
-      }
-    }
+.footer .footer-columns > .default-content {
+  max-width: none;
+  margin: 0;
+}
 
-    .section-copyright {
-      display: flex;
-      justify-content: end;
-      gap: var(--spacing-xl);
-    }
+/* brand logo — authored asset is a white-filled SVG used here as a mask */
+.footer .footer-brand {
+  margin-bottom: 32px;
+  line-height: 0;
+}
+
+.footer .footer-brand-logo {
+  display: inline-block;
+  height: 32px;
+  aspect-ratio: 185 / 48;
+  background-color: var(--footer-text);
+  mask: var(--logo-src) no-repeat center / contain;
+}
+
+/* ---------------- Link columns ---------------- */
+.footer .footer-columns-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 32px 24px;
+}
+
+.footer .footer-col-heading {
+  margin-bottom: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--footer-heading);
+}
+
+/* on desktop the heading is static text; the toggle only acts as a button
+   once the columns collapse */
+.footer .footer-col-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: default;
+}
+
+.footer .footer-col-chevron {
+  display: none;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  transition: transform 0.2s ease;
+}
+
+.footer .footer-col-links li { padding: 5px 0; }
+
+.footer .footer-col-links a {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--footer-muted);
+}
+
+.footer .footer-col-links a:hover {
+  color: var(--footer-accent);
+  text-decoration: underline;
+}
+
+/* ---------------- Follow us ---------------- */
+.footer .footer-social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.footer .footer-social-links li { padding: 0; }
+
+.footer .footer-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--footer-line);
+  border-radius: 50%;
+  color: var(--footer-text);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.footer .footer-social-link svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.footer .footer-social-link:hover {
+  background: var(--footer-text);
+  color: var(--footer-bg);
+}
+
+/* the network name stays for screen readers only — the icon carries the label */
+.footer .footer-social-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------- Bottom bar ---------------- */
+.footer .footer-bottom {
+  margin-top: clamp(32px, 4vw, 48px);
+  padding-top: 20px;
+  border-top: 1px solid var(--footer-line);
+}
+
+.footer .footer-bottom > .default-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  max-width: none;
+  margin: 0;
+}
+
+.footer .footer-copyright {
+  order: 1;
+  font-size: 13px;
+  color: var(--footer-muted);
+}
+
+.footer .footer-legal {
+  order: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+/* the social profiles pulled out of the authored bottom list */
+.footer .footer-bottom .footer-social-links {
+  order: 3;
+  gap: 10px;
+}
+
+.footer .footer-bottom .footer-social-link {
+  width: 32px;
+  height: 32px;
+}
+
+.footer .footer-bottom .footer-social-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+.footer .footer-legal a {
+  font-size: 13px;
+  color: var(--footer-muted);
+}
+
+.footer .footer-legal a:hover {
+  color: var(--footer-accent);
+  text-decoration: underline;
+}
+
+/* ---------------- Mobile ---------------- */
+@media (width <= 899px) {
+  .footer .footer-columns-list {
+    display: block;
   }
+
+  .footer .footer-col {
+    border-bottom: 1px solid var(--footer-line);
+  }
+
+  .footer .footer-col-heading {
+    margin: 0;
+    padding: 16px 0;
+  }
+
+  .footer .footer-col-toggle { cursor: pointer; }
+  .footer .footer-col-chevron { display: block; }
+
+  .footer .footer-col-links {
+    display: none;
+    padding-bottom: 12px;
+  }
+
+  .footer .footer-col.is-open .footer-col-links { display: block; }
+  .footer .footer-col.is-open .footer-col-chevron { transform: rotate(180deg); }
+
+  /* the social row is short enough to stay open */
+  .footer .footer-social .footer-col-links {
+    display: flex;
+    padding: 4px 0 20px;
+  }
+
+  .footer .footer-bottom > .default-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer .footer-copyright { order: 2; }
+  .footer .footer-legal { order: 1; }
 }

@@ -1,197 +1,436 @@
 import { getConfig, getMetadata } from '../../scripts/ak.js';
 import { loadFragment } from '../fragment/fragment.js';
-import { setColorScheme } from '../section-metadata/section-metadata.js';
 
 const { locale } = getConfig();
 
 const HEADER_PATH = '/fragments/nav/header';
-const HEADER_ACTIONS = [
-  '/tools/widgets/scheme',
-  '/tools/widgets/language',
-  '/tools/widgets/toggle',
-];
 
-function closeAllMenus() {
-  const openMenus = document.body.querySelectorAll('header .is-open');
-  for (const openMenu of openMenus) {
-    openMenu.classList.remove('is-open');
-  }
-}
+/* Each mega menu carries a promo down its right side, authored one document per
+   nav item and named after it: "Products & Solutions" → products-and-solutions.
+   An item with nothing authored simply opens without one. */
+const PROMO_PATH = '/fragments/promos/header';
 
-function docClose(e) {
-  if (e.target.closest('header')) return;
-  closeAllMenus();
-}
+/* Above this many links a pane lists them in columns instead of a pill row. */
+const PANE_PILL_MAX = 6;
 
-function toggleMenu(menu) {
-  const isOpen = menu.classList.contains('is-open');
-  closeAllMenus();
-  if (isOpen) {
-    document.removeEventListener('click', docClose);
-    return;
-  }
+const ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>';
+const ICON_USER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3.2"/><path d="M6.2 19a6.2 6.2 0 0 1 11.6 0"/></svg>';
+const ICON_SPARKLE = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 2l1.7 5.1L18 8.7l-5.3 1.7L11 15l-1.7-4.6L4 8.7l5.3-1.6z"/><path d="M18.5 13.2l.85 2.45 2.45.85-2.45.85-.85 2.45-.85-2.45L15.2 16.5l2.45-.85z"/></svg>';
+const ICON_MENU = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>';
+const ICON_CLOSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>';
 
-  // Setup the global close event
-  document.addEventListener('click', docClose);
-  menu.classList.add('is-open');
-}
-
-function decorateLanguage(btn) {
-  const section = btn.closest('.section');
+/* The sparkle action opens Onyx, the Brand Concierge. The widget is a remote
+   module — nothing is fetched until the user hovers (prefetch) or clicks. */
+function wireConcierge(btn) {
+  const glue = () => import('./concierge.js');
+  let warmed = false;
+  const warm = () => {
+    if (warmed) return;
+    warmed = true;
+    glue().then((m) => m.prefetch()).catch(() => { /* prefetch is best-effort */ });
+  };
+  btn.addEventListener('pointerenter', warm);
+  btn.addEventListener('focus', warm);
   btn.addEventListener('click', async () => {
-    let menu = section.querySelector('.language.menu');
-    if (!menu) {
-      const content = document.createElement('div');
-      content.classList.add('block-content');
-      const fragment = await loadFragment(`${locale.prefix}${HEADER_PATH}/languages`);
-      menu = document.createElement('div');
-      menu.className = 'language menu';
-      menu.append(fragment);
-      content.append(menu);
-      section.append(content);
-    }
-    toggleMenu(section);
-  });
-}
-
-function decorateScheme(btn) {
-  btn.addEventListener('click', async () => {
-    const { body } = document;
-
-    let currPref = localStorage.getItem('color-scheme');
-    if (!currPref) {
-      currPref = matchMedia('(prefers-color-scheme: dark)')
-        .matches ? 'dark-scheme' : 'light-scheme';
-    }
-
-    const theme = currPref === 'dark-scheme'
-      ? { add: 'light-scheme', remove: 'dark-scheme' }
-      : { add: 'dark-scheme', remove: 'light-scheme' };
-
-    body.classList.remove(theme.remove);
-    body.classList.add(theme.add);
-    localStorage.setItem('color-scheme', theme.add);
-    // Re-calculatie section schemes
-    const sections = document.querySelectorAll('.section');
-    for (const section of sections) {
-      setColorScheme(section);
+    btn.disabled = true;
+    try {
+      const { default: openConcierge } = await glue();
+      await openConcierge();
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('brand concierge failed to open', e);
+    } finally {
+      btn.disabled = false;
     }
   });
 }
 
-function decorateNavToggle(btn) {
-  btn.addEventListener('click', () => {
-    const header = document.body.querySelector('header');
-    if (header) header.classList.toggle('is-mobile-open');
-  });
-}
-
-async function decorateAction(header, pattern) {
-  const link = header.querySelector(`[href*="${pattern}"]`);
-  if (!link) return;
-
-  const icon = link.querySelector('.icon');
-  const text = link.textContent;
+/* The concierge trigger is not authored — it belongs to the code, so it is
+   injected into the utility strip next to the authored items. */
+function buildConciergeAction() {
+  const li = document.createElement('li');
+  li.className = 'util-concierge';
   const btn = document.createElement('button');
-  if (icon) btn.append(icon);
-  if (text) {
-    const textSpan = document.createElement('span');
-    textSpan.className = 'text';
-    textSpan.textContent = text;
-    btn.append(textSpan);
-  }
-  const wrapper = document.createElement('div');
-  wrapper.className = `action-wrapper ${icon.classList[1].replace('icon-', '')}`;
-  wrapper.append(btn);
-  link.parentElement.parentElement.replaceChild(wrapper, link.parentElement);
-
-  if (pattern === '/tools/widgets/language') decorateLanguage(btn);
-  if (pattern === '/tools/widgets/scheme') decorateScheme(btn);
-  if (pattern === '/tools/widgets/toggle') decorateNavToggle(btn);
+  btn.type = 'button';
+  btn.className = 'util-link nav-action-concierge';
+  btn.innerHTML = `${ICON_SPARKLE}<span>Ask Onyx</span>`;
+  wireConcierge(btn);
+  li.append(btn);
+  return li;
 }
 
-function decorateMenu() {
-  // TODO: finish single menu support
-  return null;
+function setToggleState(btn, open) {
+  btn.setAttribute('aria-expanded', String(open));
+  btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  btn.innerHTML = open ? ICON_CLOSE : ICON_MENU;
 }
 
-function decorateMegaMenu(li) {
-  const menu = li.querySelector('.fragment-content');
-  if (!menu) return null;
-  const wrapper = document.createElement('div');
-  wrapper.className = 'mega-menu';
-  wrapper.append(menu);
-  li.append(wrapper);
-  return wrapper;
+/* Hamburger — only shown below the desktop breakpoint, where the nav collapses
+   into a panel under the bar. */
+function buildNavToggle(root) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'nav-toggle';
+  setToggleState(btn, false);
+  btn.addEventListener('click', () => {
+    const open = !root.classList.contains('is-nav-open');
+    root.classList.toggle('is-nav-open', open);
+    setToggleState(btn, open);
+    if (!open) root.querySelectorAll('li.is-open').forEach((li) => li.classList.remove('is-open'));
+  });
+  return btn;
 }
 
-function decorateNavItem(li) {
-  li.classList.add('main-nav-item');
-  const link = li.querySelector(':scope > p > a');
-  if (link) link.classList.add('main-nav-link');
-  const menu = decorateMegaMenu(li) || decorateMenu(li);
-  if (!(menu || link)) return;
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    toggleMenu(li);
+function closeNav(root) {
+  if (!root.classList.contains('is-nav-open')) return;
+  root.classList.remove('is-nav-open');
+  const btn = root.querySelector('.nav-toggle');
+  if (btn) setToggleState(btn, false);
+}
+
+function closeAll(root) {
+  root.querySelectorAll('li.is-open').forEach((li) => {
+    li.classList.remove('is-open');
+    const trigger = li.querySelector(':scope > .nav-trigger, :scope > p > .nav-trigger');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
   });
 }
 
-function decorateBrandSection(section) {
-  section.classList.add('brand-section');
-  const brandLink = section.querySelector('a');
-  const [, text] = brandLink.childNodes;
-  const span = document.createElement('span');
-  span.className = 'brand-text';
-  span.append(text);
-  brandLink.append(span);
+/** The label an item was authored with, ignoring anything in its sub-list. */
+function labelOf(li) {
+  // once decorated the label lives in the trigger, before that in the authored <p>
+  const el = li.querySelector(':scope > .nav-trigger, :scope > p');
+  if (el) return el.textContent.replace(/\s+/g, ' ').trim();
+  return [...li.childNodes]
+    .filter((n) => n.nodeType === Node.TEXT_NODE)
+    .map((n) => n.textContent)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
-function decorateNavSection(section) {
-  section.classList.add('main-nav-section');
-  const navContent = section.querySelector('.default-content');
-  const navList = section.querySelector('ul');
-  if (!navList) return;
-  navList.classList.add('main-nav-list');
+/* The thing that opens a menu. Authored labels with a link keep it — the href
+   stays as the landing page for middle-click and crawlers, the click just
+   opens the panel instead. Labels authored as plain text become buttons so
+   they are reachable by keyboard. */
+function makeTrigger(li) {
+  const link = li.querySelector(':scope > a, :scope > p > a');
+  if (link) {
+    link.classList.add('nav-trigger');
+    link.setAttribute('role', 'button');
+    return link;
+  }
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'nav-trigger';
+  btn.textContent = labelOf(li);
+  li.querySelectorAll(':scope > p').forEach((p) => p.remove());
+  [...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE).forEach((n) => n.remove());
+  li.prepend(btn);
+  return btn;
+}
 
-  const nav = document.createElement('nav');
-  nav.append(navList);
-  navContent.append(nav);
+/** "Products & Solutions" → "products-and-solutions" */
+const slugify = (label) => label
+  .toLowerCase()
+  .replace(/&/g, ' and ')
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-|-$/g, '');
 
-  const mainNavItems = section.querySelectorAll('nav > ul > li');
-  for (const navItem of mainNavItems) {
-    decorateNavItem(navItem);
+/* The promo is authored as a title, a line of copy, a call to action and an
+   image — tag each so the panel can lay them out. */
+function decoratePromo(promo) {
+  let titled = false;
+  for (const p of promo.querySelectorAll('p')) {
+    if (p.querySelector('picture, img')) {
+      p.classList.add('promo-media');
+    } else if (p.querySelector('a')) {
+      p.classList.add('promo-cta');
+    } else if (!titled && p.querySelector('strong')) {
+      p.classList.add('promo-title');
+      titled = true;
+    } else {
+      p.classList.add('promo-copy');
+    }
   }
 }
 
-async function decorateActionSection(section) {
-  section.classList.add('actions-section');
+/* Pull in the item's promo the first time the menu is reached for. Nothing is
+   fetched on page load, and an item with no promo authored just stays a
+   two-column panel. */
+async function loadPromo(li, inner) {
+  if (li.dataset.promoState) return;
+  li.dataset.promoState = 'loading';
+  try {
+    const promo = await loadFragment(`${locale.prefix}${PROMO_PATH}/${li.dataset.promoSlug}`);
+    promo.classList.add('mega-promo');
+    decoratePromo(promo);
+    inner.append(promo);
+    inner.classList.add('has-promo');
+    li.dataset.promoState = 'loaded';
+  } catch {
+    li.dataset.promoState = 'none';
+  }
 }
 
-async function decorateHeader(fragment) {
-  const sections = fragment.querySelectorAll(':scope > .section');
-  if (sections[0]) decorateBrandSection(sections[0]);
-  if (sections[1]) decorateNavSection(sections[1]);
-  if (sections[2]) decorateActionSection(sections[2]);
+/* One group's side of the mega menu: everything the author put in the group
+   besides its label, so an inlined nav fragment lands in the pane alongside
+   the links. */
+function buildPane(group, links, id) {
+  const pane = document.createElement('div');
+  pane.className = 'mega-pane';
+  pane.id = id;
+  links.classList.add('pane-links');
+  const count = links.querySelectorAll(':scope > li').length;
+  pane.classList.add(count > PANE_PILL_MAX ? 'pane-columns' : 'pane-pills');
+  const extras = [...group.children].filter((c) => c !== links && c.tagName !== 'P');
+  pane.append(...extras, links);
+  return pane;
+}
 
-  for (const pattern of HEADER_ACTIONS) {
-    decorateAction(fragment, pattern);
-  }
+/* The rail entry that reveals a pane. Hover and focus switch panes too, so the
+   menu behaves like the tabs it looks like. */
+function buildRailButton(label, pane, rail, panes) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'rail-btn';
+  btn.setAttribute('aria-expanded', 'false');
+  btn.setAttribute('aria-controls', pane.id);
+  btn.textContent = label;
+  const activate = () => {
+    rail.querySelectorAll('.rail-btn').forEach((b) => {
+      b.classList.remove('is-active');
+      b.setAttribute('aria-expanded', 'false');
+    });
+    panes.querySelectorAll('.mega-pane').forEach((p) => p.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    btn.setAttribute('aria-expanded', 'true');
+    pane.classList.add('is-active');
+  };
+  btn.addEventListener('click', activate);
+  btn.addEventListener('pointerenter', activate);
+  btn.addEventListener('focus', activate);
+  return btn;
 }
 
 /**
- * loads and decorates the header
+ * Rebuild a mega menu's authored groups into a rail of group names plus one
+ * pane each, so the pane shows whatever the group holds — its links, and any
+ * nav fragment the author dropped in for the promo side.
+ */
+function buildMega(li, groups) {
+  const inner = document.createElement('div');
+  inner.className = 'mega-inner';
+  const rail = document.createElement('ul');
+  rail.className = 'mega-rail';
+  const panes = document.createElement('div');
+  panes.className = 'mega-panes';
+
+  let first = null;
+  for (const [idx, group] of groups.entries()) {
+    const links = group.querySelector(':scope > ul');
+    const label = labelOf(group);
+    const railItem = document.createElement('li');
+
+    if (links) {
+      const pane = buildPane(group, links, `${li.dataset.navId}-p${idx}`);
+      const btn = buildRailButton(label, pane, rail, panes);
+      railItem.append(btn);
+      panes.append(pane);
+      if (!first) first = { btn, pane };
+    } else {
+      // a group with no sub-list is a plain link in the rail — it navigates
+      const link = group.querySelector(':scope > a, :scope > p > a');
+      if (link) {
+        link.classList.add('rail-link');
+        railItem.append(link);
+      } else {
+        railItem.classList.add('rail-text');
+        railItem.textContent = label;
+      }
+    }
+    rail.append(railItem);
+  }
+
+  // the menu always opens on its first group rather than an empty right side
+  if (first) {
+    first.btn.classList.add('is-active');
+    first.btn.setAttribute('aria-expanded', 'true');
+    first.pane.classList.add('is-active');
+  }
+
+  inner.append(rail, panes);
+  return inner;
+}
+
+function wireDropdowns(topList, root, { mega = false } = {}) {
+  // items with no sub-list are leaf links — they just navigate
+  const items = [...topList.querySelectorAll(':scope > li')]
+    .map((li, idx) => ({ li, idx, panel: li.querySelector(':scope > ul') }))
+    .filter(({ panel }) => panel);
+
+  for (const { li, idx, panel } of items) {
+    li.dataset.navId = `nav-${mega ? 'p' : 'u'}${idx}`;
+    li.classList.add('has-panel');
+
+    const groups = [...panel.querySelectorAll(':scope > li')];
+    const grouped = groups.filter((g) => g.querySelector(':scope > ul'));
+    li.classList.add(mega ? 'is-mega' : 'is-drop');
+
+    const trigger = makeTrigger(li);
+    trigger.setAttribute('aria-expanded', 'false');
+
+    if (mega) {
+      li.dataset.promoSlug = slugify(labelOf(li));
+      const inner = buildMega(li, groups);
+      // one group has nothing to switch between, so the rail is dropped; with
+      // none at all the rail is the menu, holding the links itself
+      if (grouped.length === 1) inner.classList.add('no-rail');
+      panel.replaceWith(inner);
+      // warm the promo on approach so it is there by the time the panel opens
+      trigger.addEventListener('pointerenter', () => loadPromo(li, inner));
+      trigger.addEventListener('focus', () => loadPromo(li, inner));
+      trigger.addEventListener('click', () => loadPromo(li, inner));
+    } else {
+      panel.classList.add('drop-list');
+      // a single authored group would nest the links one level deeper than the
+      // dropdown needs — lift them so the drop is one flat list
+      const only = grouped.length === 1 ? grouped[0] : null;
+      const lifted = only?.querySelector(':scope > ul');
+      if (lifted) {
+        const heading = only.querySelector(':scope > p');
+        if (heading && heading.textContent.trim() === labelOf(li)) heading.remove();
+        panel.replaceChildren(...lifted.children);
+      }
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      const open = li.classList.contains('is-open');
+      closeAll(root);
+      li.classList.toggle('is-open', !open);
+      trigger.setAttribute('aria-expanded', String(!open));
+    });
+  }
+}
+
+/* Utility strip: Log In and Language & Region are authored as groups and become
+   dropdowns; Search is authored as a bare label. Each item is tagged so CSS can
+   hang the right glyph off it. */
+function decorateUtility(section, root) {
+  section.classList.add('utility-nav');
+  const topList = section.querySelector('ul');
+  if (!topList) return;
+  topList.classList.add('utility-nav-list');
+  wireDropdowns(topList, root);
+
+  for (const li of topList.querySelectorAll(':scope > li')) {
+    const label = labelOf(li);
+    // dropdowns own a trigger by now; a bare label is still just its paragraph
+    const target = li.querySelector(':scope > .nav-trigger, :scope > a, :scope > p') || li;
+    if (/log\s*in|sign\s*in|account/i.test(label)) {
+      li.classList.add('util-login');
+      target.insertAdjacentHTML('afterbegin', ICON_USER);
+    } else if (/language|region|country/i.test(label)) {
+      li.classList.add('util-locale');
+      // the strip shows the region you are in, not the label of the chooser
+      const region = (locale.prefix || '/us').replace('/', '').toUpperCase();
+      const text = [...target.childNodes].find((n) => n.nodeType === Node.TEXT_NODE);
+      if (text) text.textContent = region;
+      else target.textContent = region;
+    } else if (/search/i.test(label)) {
+      li.classList.add('util-search');
+      target.insertAdjacentHTML('afterbegin', ICON_SEARCH);
+    }
+    target.classList.add('util-link');
+  }
+
+  topList.append(buildConciergeAction());
+}
+
+/* Brand logo: the authored asset is already the purple lockup, so it is shown
+   as-is rather than recolored. */
+function decorateBrand(section) {
+  const img = section.querySelector(':scope > .default-content > p img, :scope > p img');
+  if (!img) return;
+  const p = img.closest('p');
+  p.classList.add('brand');
+  if (img.closest('a')) return;
+  // an unlinked logo is a dead end — send it home
+  const link = document.createElement('a');
+  link.href = `${locale.prefix}/`;
+  link.setAttribute('aria-label', img.getAttribute('alt')?.trim() || 'Extreme Networks');
+  link.append(img.closest('picture') || img);
+  p.replaceChildren(link);
+}
+
+function decoratePrimary(section, root) {
+  section.classList.add('primary-nav');
+  const topList = section.querySelector('ul');
+  if (!topList) return;
+  topList.classList.add('primary-nav-list');
+  wireDropdowns(topList, root, { mega: true });
+  // the authored CTA is the last item — pull it out of the list flow
+  const cta = topList.querySelector(':scope > li:last-child .btn');
+  if (cta) cta.closest('li').classList.add('primary-nav-cta');
+}
+
+/* The banner and the utility strip fold away once the page scrolls, so only the
+   nav bar itself stays stuck to the top. */
+function wireScrollCollapse(fragment) {
+  let ticking = false;
+  const update = () => {
+    fragment.classList.toggle('is-scrolled', window.scrollY > 24);
+    ticking = false;
+  };
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
+  update();
+}
+
+/**
+ * Loads and decorates the header from the authored nav fragment. Sections are
+ * matched by what they hold rather than their order, so an extra section (the
+ * notification banner) doesn't shift the nav:
+ *   - the section holding the notification-banner block → banner
+ *   - the section holding the logo → primary nav
+ *   - the remaining list section → utility strip
  * @param {Element} el The header element
  */
 export default async function init(el) {
-  const headerMeta = getMetadata('header');
-  const path = headerMeta || HEADER_PATH;
-  try {
-    const fragment = await loadFragment(`${locale.prefix}${path}`);
-    fragment.classList.add('header-content');
-    await decorateHeader(fragment);
-    el.append(fragment);
-  } catch (e) {
-    throw Error(e);
+  const path = getMetadata('header') || HEADER_PATH;
+  const fragment = await loadFragment(`${locale.prefix}${path}`);
+  fragment.classList.add('header-content');
+
+  const sections = [...fragment.querySelectorAll(':scope > .section')];
+  const banner = sections.find((s) => s.querySelector('.notification-banner'));
+  const primary = sections.find((s) => s !== banner && s.querySelector('img'));
+  const utility = sections.find((s) => s !== banner && s !== primary && s.querySelector('ul'));
+
+  if (banner) banner.classList.add('nav-banner');
+  if (utility) decorateUtility(utility, fragment);
+  if (primary) {
+    decorateBrand(primary);
+    decoratePrimary(primary, fragment);
+    const bar = primary.querySelector('.default-content');
+    if (bar) bar.prepend(buildNavToggle(fragment));
   }
+
+  el.append(fragment);
+  wireScrollCollapse(fragment);
+
+  // Close any open panel (and the mobile nav) on outside click or Escape.
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('header')) return;
+    closeAll(fragment);
+    closeNav(fragment);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    closeAll(fragment);
+    closeNav(fragment);
+  });
 }
