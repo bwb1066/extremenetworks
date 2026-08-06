@@ -1,71 +1,81 @@
-/* video-carousel-hero — customer-story video cards under a section header. */
+/* video-carousel-hero — coverflow of customer stories on the navy section. */
 
 .video-carousel-hero {
+  background: #101a37;
+  color: #fff;
   font-family: "DM Sans", montserrat, arial, sans-serif;
   padding: clamp(40px, 5vw, 72px) 0;
+  overflow: hidden;
 }
 
 .video-carousel-hero .video-head {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
-  gap: 12px 24px;
+  gap: 12px 32px;
   max-width: var(--grid-container-width);
-  margin: 0 auto 28px;
+  margin: 0 auto 32px;
+  text-align: center;
 }
 
 .video-carousel-hero .video-head h1,
 .video-carousel-hero .video-head h2 {
   margin: 0;
-  font-size: clamp(24px, 2.6vw, 36px);
+  font-size: clamp(24px, 2.8vw, 38px);
   font-weight: 700;
-  line-height: 1.15;
 }
 
 .video-carousel-hero .video-viewall {
-  margin: 0 0 0 auto;
+  margin: 0;
   font-size: 16px;
   font-weight: 700;
 }
 
 .video-carousel-hero .video-viewall a {
-  color: #409;
+  color: #fff;
   text-decoration: none;
 }
 
 .video-carousel-hero .video-viewall a:hover { text-decoration: underline; }
 
+.video-carousel-hero .video-viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
 .video-carousel-hero .video-track {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
-  gap: 24px;
-  max-width: var(--grid-container-width);
-  margin-inline: auto;
+  position: relative;
+  display: flex;
+  gap: 28px;
+  padding: 12px 0;
+  transition: transform 0.5s cubic-bezier(0.6, 0.05, 0.2, 0.95);
 }
 
 .video-carousel-hero .video-card {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  flex: 0 0 clamp(600px, 66vw, 1040px);
+  min-height: clamp(360px, 34vw, 480px);
+  border-radius: 20px;
   overflow: hidden;
-  border-radius: 14px;
-  background: #fff;
-  border: 1px solid #e3e6ec;
-  box-shadow: 0 8px 24px rgb(22 33 51 / 6%);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #0f1430;
+  opacity: 0.4;
+  transform: scale(0.92);
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-.video-carousel-hero .video-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgb(22 33 51 / 14%);
+.video-carousel-hero .video-card.is-active {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .video-carousel-hero .video-media {
-  position: relative;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   display: block;
-  aspect-ratio: 16 / 9;
   line-height: 0;
-  background: linear-gradient(120deg, #280070, #409);
 }
 
 .video-carousel-hero .video-media img {
@@ -74,78 +84,52 @@
   object-fit: cover;
 }
 
-.video-carousel-hero .video-play {
+.video-carousel-hero .video-panel {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 58px;
-  height: 58px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: rgb(255 255 255 / 92%);
-  box-shadow: 0 6px 18px rgb(0 0 0 / 25%);
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.video-carousel-hero .video-play::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 54%;
-  width: 0;
-  height: 0;
-  border-left: 16px solid #409;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  transform: translate(-50%, -50%);
-}
-
-.video-carousel-hero .video-media:hover .video-play {
-  transform: translate(-50%, -50%) scale(1.08);
-  background: #fff;
-}
-
-.video-carousel-hero .video-content {
+  inset: 18px 18px 18px auto;
+  z-index: 2;
   display: flex;
-  flex: 1;
   flex-direction: column;
-  gap: 10px;
-  padding: 20px 22px 22px;
+  width: min(42%, 430px);
+  padding: clamp(22px, 2vw, 34px);
+  border-radius: 16px;
+  background: rgb(9 8 26 / 78%);
+  backdrop-filter: blur(6px);
 }
 
-.video-carousel-hero .video-content h1,
-.video-carousel-hero .video-content h2,
-.video-carousel-hero .video-content h3,
-.video-carousel-hero .video-content h4 {
+.video-carousel-hero .video-panel h1,
+.video-carousel-hero .video-panel h2,
+.video-carousel-hero .video-panel h3,
+.video-carousel-hero .video-panel h4 {
   margin: 0;
-  font-size: 19px;
+  font-size: clamp(22px, 2vw, 30px);
   font-weight: 700;
-  line-height: 1.28;
+  line-height: 1.2;
 }
 
 .video-carousel-hero .video-teaser {
-  margin: 0;
-  flex: 1;
-  font-size: 14px;
+  margin: 14px 0 0;
+  font-size: 15px;
   line-height: 1.5;
-  color: #4a5568;
+  color: rgb(255 255 255 / 85%);
 }
 
 .video-carousel-hero .video-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-top: 4px;
+  gap: 24px;
+  margin-top: auto;
+  padding-top: 22px;
 }
 
 .video-carousel-hero .video-learn,
 .video-carousel-hero .video-watch {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-size: 14px;
   font-weight: 700;
-  color: #409;
+  color: #fff;
   text-decoration: none;
 }
 
@@ -158,18 +142,86 @@
   transform: rotate(-45deg);
 }
 
-.video-carousel-hero .video-watch {
-  color: #4a5568;
-}
-
 .video-carousel-hero .video-watch::before {
   content: "";
   width: 0;
   height: 0;
-  border-left: 9px solid currentcolor;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
+  border-left: 10px solid currentcolor;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
 }
 
 .video-carousel-hero .video-learn:hover,
 .video-carousel-hero .video-watch:hover { text-decoration: underline; }
+
+/* ---------------- avatars ---------------- */
+.video-carousel-hero .video-avatars {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 34px;
+}
+
+.video-carousel-hero .video-avatar {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #26304f;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.video-carousel-hero .video-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-carousel-hero .video-avatar:hover { opacity: 0.85; }
+
+.video-carousel-hero .video-avatar.is-active {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+/* clock-dial progress ring, only on the active avatar */
+.video-carousel-hero .video-avatar-ring {
+  position: absolute;
+  inset: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  pointer-events: none;
+  transform: rotate(-90deg);
+}
+
+.video-carousel-hero .video-avatar-ring circle {
+  fill: none;
+  stroke: #7d76f2;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 295.31;
+  stroke-dashoffset: 0;
+}
+
+.video-carousel-hero .video-avatar:not(.is-active) .video-avatar-ring { display: none; }
+
+@media (width <= 760px) {
+  .video-carousel-hero .video-card {
+    flex-basis: 88%;
+    min-height: 0;
+  }
+
+  .video-carousel-hero .video-panel {
+    position: relative;
+    inset: auto;
+    width: auto;
+    margin-top: 46%;
+    border-radius: 0;
+    background: rgb(9 8 26 / 86%);
+  }
+}
