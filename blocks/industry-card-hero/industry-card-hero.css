@@ -1,0 +1,38 @@
+/* industry-card-hero — dissolves into the shared grid so its header spans the
+   full row and its tile behaves like any other .industry-card. Tile visuals
+   come from industry-card.css. */
+
+.industry-card-hero { display: contents; }
+
+.industry-card-hero .ic-head {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 4px;
+  font-family: "DM Sans", montserrat, arial, sans-serif;
+}
+
+.industry-card-hero .ic-showall {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 16px;
+  font-weight: 700;
+  color: #409;
+  text-decoration: none;
+}
+
+.industry-card-hero .ic-showall::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+  transform: rotate(-45deg);
+  transition: transform 0.2s ease;
+}
+
+.industry-card-hero a.ic-showall:hover::after { transform: translateX(3px) rotate(-45deg); }
