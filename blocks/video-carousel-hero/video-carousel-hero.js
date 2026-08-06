@@ -51,6 +51,18 @@ function buildCard(body) {
   const videoUrl = videoLink?.getAttribute('href');
   const learnUrl = learnLink?.getAttribute('href');
 
+  // the brand logo is the standalone picture (a <p> holding only an image),
+  // as opposed to the little "Watch" play glyph inside the CTA paragraph
+  const logoPic = [...body.querySelectorAll(':scope > p > picture')].find((pic) => {
+    const p = pic.closest('p');
+    return p && !p.querySelector('a') && !p.textContent.trim();
+  });
+  let logo = null;
+  if (logoPic) {
+    logo = logoPic.cloneNode(true);
+    logoPic.closest('p').remove();
+  }
+
   const heading = body.querySelector('h1, h2, h3, h4');
   const teaser = [...body.querySelectorAll(':scope > p')]
     .find((p) => !p.querySelector('a') && p.textContent.trim())?.textContent.trim();
@@ -73,6 +85,11 @@ function buildCard(body) {
   card.append(media);
 
   const panel = el('div', 'video-panel');
+  if (logo) {
+    const brand = el('div', 'video-logo');
+    brand.append(logo.cloneNode(true));
+    panel.append(brand);
+  }
   if (heading) {
     heading.querySelectorAll('a').forEach((a) => {
       const span = el('span');
@@ -104,7 +121,7 @@ function buildCard(body) {
   }
   panel.append(actions);
   card.append(panel);
-  return card;
+  return { card, logo };
 }
 
 export default function init(block) {
@@ -118,9 +135,10 @@ export default function init(block) {
     head.querySelector('p')?.classList.add('video-viewall');
   }
 
-  const cards = [...block.querySelectorAll(':scope table')]
+  const built = [...block.querySelectorAll(':scope table')]
     .filter((t) => (t.querySelector(':scope > tbody > tr')?.textContent || '').trim().toLowerCase() === 'video-card')
     .map((t) => buildCard(tableBody(t)));
+  const cards = built.map((b) => b.card);
 
   block.textContent = '';
   if (head.children.length) block.append(head);
@@ -132,13 +150,16 @@ export default function init(block) {
   viewport.append(track);
 
   const dots = el('div', 'video-avatars');
-  const avatars = cards.map((c, i) => {
+  const avatars = built.map(({ card, logo }, i) => {
     const btn = el('button', 'video-avatar');
     btn.type = 'button';
     btn.setAttribute('aria-label', `Story ${i + 1}`);
-    if (c.dataset.poster) {
+    if (logo) {
+      btn.classList.add('has-logo');
+      btn.append(logo);
+    } else if (card.dataset.poster) {
       const img = el('img');
-      img.src = c.dataset.poster;
+      img.src = card.dataset.poster;
       img.alt = '';
       img.loading = 'lazy';
       btn.append(img);

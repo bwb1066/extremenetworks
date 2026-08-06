@@ -210,6 +210,40 @@
 
 .video-carousel-hero .video-avatar:not(.is-active) .video-avatar-ring { display: none; }
 
+/* logo avatars sit on a white disc, contained with padding */
+.video-carousel-hero .video-avatar.has-logo { background: #fff; }
+
+.video-carousel-hero .video-avatar.has-logo picture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 22%;
+}
+
+.video-carousel-hero .video-avatar.has-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.video-carousel-hero .video-avatar:not(.is-active).has-logo { filter: grayscale(0.5); }
+
+/* brand logo at the top of the active card's panel */
+.video-carousel-hero .video-logo {
+  margin-bottom: 16px;
+  line-height: 0;
+}
+
+.video-carousel-hero .video-logo img {
+  width: auto;
+  height: 44px;
+  max-width: 70%;
+  object-fit: contain;
+}
+
 @media (width <= 760px) {
   .video-carousel-hero .video-card {
     flex-basis: 88%;
