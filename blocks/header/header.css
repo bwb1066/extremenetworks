@@ -280,6 +280,10 @@ header.header button {
 
 /* ---------------- Mega menu ---------------- */
 .header .primary-nav-list > li.is-mega > .mega-inner {
+  /* pin the panel's content to the ~19%/80% rails, independent of the nav
+     bar's adaptive edge (which narrows on mid-width screens to avoid wrap) */
+  --nav-edge: 19%;
+
   display: none;
   position: absolute;
   top: 100%;
