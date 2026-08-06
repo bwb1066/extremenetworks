@@ -3,7 +3,7 @@
 .resources-hero {
   font-family: "DM Sans", montserrat, arial, sans-serif;
   padding: clamp(40px, 5vw, 72px) 0;
-  background: var(--color-shaded, #f9f9f9);
+  background: #fff;
 }
 
 .resources-hero .resources-head {
@@ -59,9 +59,14 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
+/* per-position card colours, left to right */
+.resources-hero .resource-card:nth-child(1) { background: #1d0441; }
+.resources-hero .resource-card:nth-child(2) { background: #4e0e8d; }
+.resources-hero .resource-card:nth-child(3) { background: #671cf0; }
+.resources-hero .resource-card:nth-child(4) { background: #5954b4; }
+
 .resources-hero .resource-card:hover {
   transform: translateY(-4px);
-  background: #49037d;
   box-shadow: 0 18px 40px rgb(40 0 90 / 32%);
 }
 

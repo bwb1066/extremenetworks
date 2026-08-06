@@ -87,7 +87,12 @@ export default function init(block) {
   if (headRow) {
     const cell = headRow.querySelector(':scope > div') || headRow;
     while (cell.firstElementChild) head.append(cell.firstElementChild);
-    head.querySelector('p')?.classList.add('resources-viewall');
+    const viewall = head.querySelector('p');
+    if (viewall) {
+      // drop AK's auto button-decoration so it renders as a plain link
+      viewall.className = 'resources-viewall';
+      viewall.querySelector('a')?.removeAttribute('class');
+    }
   }
 
   const grid = el('div', 'resources-grid');
