@@ -57,16 +57,22 @@ function buildCard(body) {
     e.textContent = eyebrow;
     card.append(e);
   }
+
+  // title and teaser share one area; on hover the teaser crossfades in over the
+  // title (see CSS), so the copy "replaces the header"
+  const swap = el('div', 'resource-swap');
   if (title) {
     const h = el('h3', 'resource-title');
     h.textContent = title;
-    card.append(h);
+    swap.append(h);
   }
   if (teaser) {
     const t = el('p', 'resource-teaser');
     t.textContent = teaser;
-    card.append(t);
+    swap.append(t);
   }
+  card.append(swap);
+
   const cta = el('span', 'resource-cta');
   cta.textContent = ctaText || 'Learn More';
   card.append(cta);
