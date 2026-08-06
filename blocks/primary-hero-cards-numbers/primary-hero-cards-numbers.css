@@ -1,0 +1,324 @@
+/* primary-hero-cards-numbers — Extreme Networks homepage opener.
+   Palette: purple gradient #280070 -> #440099, ink #162133, teal accent #00b3be. */
+
+.primary-hero-cards-numbers {
+  --en-purple: #409;
+  --en-purple-dark: #280070;
+  --en-purple-bright: #7d76f2;
+  --en-navy: #101a37;
+  --en-ink: #162133;
+  --en-muted: #4a5568;
+  --en-line: #e3e6ec;
+  --en-band: #f5f6f9;
+
+  display: block;
+  font-family: "DM Sans", montserrat, arial, sans-serif;
+  color: var(--en-ink);
+  background: var(--en-navy);
+  padding-bottom: clamp(48px, 6vw, 88px);
+}
+
+.primary-hero-cards-numbers a { text-decoration: none; }
+.primary-hero-cards-numbers p { margin: 0; }
+
+/* ---------------- Hero ---------------- */
+.primary-hero-cards-numbers .phcn-hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(120% 140% at 85% 20%, #5a12c8 0%, transparent 55%),
+    linear-gradient(115deg, var(--en-purple-dark) 0%, var(--en-purple) 60%, #5a12c8 100%);
+}
+
+/* the authored asset is a transparent PNG (person + purple orbs) that sits
+   directly on the navy — so contain it, top-right, no crop and no mask */
+.primary-hero-cards-numbers .phcn-hero-bg {
+  position: absolute;
+  top: 0;
+  right: clamp(0px, 3vw, 64px);
+  bottom: 0;
+  width: 46%;
+  z-index: 0;
+  line-height: 0;
+}
+
+.primary-hero-cards-numbers .phcn-hero-bg picture,
+.primary-hero-cards-numbers .phcn-hero-bg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: top right;
+}
+
+.primary-hero-cards-numbers .phcn-hero-inner {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  max-width: var(--grid-container-width);
+  margin-inline: auto;
+  padding: clamp(48px, 7vw, 104px) 0;
+}
+
+.primary-hero-cards-numbers .phcn-hero-inner h1 {
+  max-width: 614px;
+  margin: 0 0 20px;
+  font-size: clamp(26px, 2.4vw, 36px);
+  line-height: 1.16;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* accent = "Extreme <rotating word>." — larger and in bright purple */
+.primary-hero-cards-numbers .phcn-accent {
+  display: inline-block;
+  color: var(--en-purple-bright);
+  font-size: clamp(40px, 3.7vw, 56px);
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.primary-hero-cards-numbers .phcn-rotator {
+  display: inline-block;
+  height: 1.25em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.primary-hero-cards-numbers .phcn-rotator-track {
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.6, 0.05, 0.2, 0.95);
+}
+
+.primary-hero-cards-numbers .phcn-word {
+  display: block;
+  height: 1.25em;
+  line-height: 1.25em;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary-hero-cards-numbers .phcn-rotator-track { transition: none; }
+}
+
+.primary-hero-cards-numbers .phcn-tagline {
+  margin: 0 0 22px;
+  font-size: clamp(15px, 1.4vw, 19px);
+  font-weight: 700;
+  line-height: 1.9;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #e9d9ff;
+}
+
+.primary-hero-cards-numbers .phcn-tagline strong { font-weight: 700; }
+
+.primary-hero-cards-numbers .phcn-lede {
+  max-width: 614px;
+  margin: 0 0 32px;
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.55;
+  color: rgb(255 255 255 / 90%);
+}
+
+.primary-hero-cards-numbers .phcn-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.primary-hero-cards-numbers .phcn-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 15px 34px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.primary-hero-cards-numbers .phcn-btn:hover { transform: translateY(-2px); }
+
+.primary-hero-cards-numbers .phcn-btn-primary {
+  background: #5b059c;
+  color: #fff;
+}
+
+.primary-hero-cards-numbers .phcn-btn-primary:hover { background: #49037d; }
+
+.primary-hero-cards-numbers .phcn-btn-primary:active,
+.primary-hero-cards-numbers .phcn-btn-primary:focus-visible {
+  background: #49037d;
+  box-shadow: 0 0 0 3px #fff;
+}
+
+.primary-hero-cards-numbers .phcn-btn-outline {
+  border: 2px solid rgb(255 255 255 / 70%);
+  padding: 13px 32px;
+  background: transparent;
+  color: #fff;
+}
+
+.primary-hero-cards-numbers .phcn-btn-outline:hover {
+  background: #5a069c;
+  border-color: #5a069c;
+}
+
+/* ---------------- Product cards ----------------
+   Uniform ~290×380 cards in a full-width row that spans the page, title and
+   copy on top with the image flush to the bottom. */
+.primary-hero-cards-numbers .phcn-cards-wrap {
+  max-width: none;
+  margin: 0;
+  padding: 0 clamp(20px, 2.6vw, 48px);
+}
+
+.primary-hero-cards-numbers .phcn-cards {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin-top: -56px;
+  position: relative;
+  z-index: 2;
+}
+
+.primary-hero-cards-numbers .phcn-card {
+  display: flex;
+  flex-direction: column;
+  height: 380px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--en-ink);
+  box-shadow: 0 18px 44px rgb(22 33 51 / 12%);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-hero-cards-numbers .phcn-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 26px 60px rgb(22 33 51 / 18%);
+}
+
+.primary-hero-cards-numbers .phcn-card-content {
+  padding: 24px 22px 14px;
+}
+
+.primary-hero-cards-numbers .phcn-card-content h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  line-height: 1.22;
+  font-weight: 700;
+}
+
+.primary-hero-cards-numbers .phcn-card-chevron {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 4px;
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+  transform: rotate(-45deg);
+  vertical-align: middle;
+}
+
+.primary-hero-cards-numbers .phcn-card-content p {
+  margin: 0;
+  color: var(--en-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.primary-hero-cards-numbers .phcn-card-media {
+  margin-top: auto;
+  flex: 1;
+  min-height: 0;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.primary-hero-cards-numbers .phcn-card-media picture,
+.primary-hero-cards-numbers .phcn-card-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------------- Stats band ---------------- */
+.primary-hero-cards-numbers .phcn-stats-wrap { margin-top: clamp(48px, 6vw, 88px); }
+
+.primary-hero-cards-numbers .phcn-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: var(--grid-container-width);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.primary-hero-cards-numbers .phcn-stat {
+  padding: 8px 16px;
+  color: #fff;
+}
+
+.primary-hero-cards-numbers .phcn-stat-num {
+  font-size: clamp(44px, 5vw, 68px);
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.primary-hero-cards-numbers .phcn-stat-num strong { font-weight: 700; }
+
+.primary-hero-cards-numbers .phcn-stat-label {
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.primary-hero-cards-numbers .phcn-stat-sub {
+  margin-top: 4px;
+  font-size: 15px;
+  color: rgb(255 255 255 / 72%);
+}
+
+/* ---------------- Responsive ----------------
+   The six cards hold their row down to ~1150px, then wrap. */
+@media (width <= 1150px) {
+  .primary-hero-cards-numbers .phcn-cards { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (width <= 900px) {
+  .primary-hero-cards-numbers .phcn-cards { margin-top: -32px; }
+
+  .primary-hero-cards-numbers .phcn-hero-bg {
+    width: 100%;
+    opacity: 0.22;
+    mask-image: none;
+  }
+}
+
+@media (width <= 680px) {
+  .primary-hero-cards-numbers .phcn-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (width <= 640px) {
+  .primary-hero-cards-numbers .phcn-stats {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .primary-hero-cards-numbers .phcn-stat + .phcn-stat { border-left: 0; }
+
+  .primary-hero-cards-numbers .phcn-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .primary-hero-cards-numbers .phcn-btn { justify-content: center; }
+}
