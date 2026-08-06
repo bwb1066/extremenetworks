@@ -1,63 +1,101 @@
-/* spotlight-hero — horizontal, scroll-snapping carousel of news cards. */
+/* spotlight-hero — paginated carousel: one large card + two stacked cards per
+   page, dark cards on a white section, with a progress bar and prev/next. */
 
 .spotlight-hero {
+  background: #fff;
   font-family: "DM Sans", montserrat, arial, sans-serif;
-  padding: clamp(32px, 4vw, 56px) 0;
-  background: var(--color-shaded, #f9f9f9);
+  padding: clamp(40px, 5vw, 72px) 0;
+}
+
+.spotlight-hero .spotlight-head {
+  max-width: var(--grid-container-width);
+  margin: 0 auto 24px;
+}
+
+.spotlight-hero .spotlight-head h2 {
+  margin: 0;
+  font-size: clamp(24px, 2.6vw, 34px);
+  font-weight: 700;
+  color: #111;
+}
+
+.spotlight-hero .spotlight-viewport {
+  max-width: var(--grid-container-width);
+  margin-inline: auto;
+  overflow: hidden;
 }
 
 .spotlight-hero .spotlight-track {
+  display: flex;
+  transition: transform 0.45s cubic-bezier(0.6, 0.05, 0.2, 0.95);
+}
+
+.spotlight-hero .spotlight-page {
+  flex: 0 0 100%;
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(288px, 320px);
-  gap: 24px;
-  max-width: var(--grid-container-width);
-  margin-inline: auto;
-  padding: 4px 4px 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-  overscroll-behavior-x: contain;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
+  min-height: clamp(420px, 42vw, 560px);
 }
 
 .spotlight-hero .spotlight-card {
-  scroll-snap-align: start;
+  position: relative;
   display: flex;
-  flex-direction: column;
   overflow: hidden;
-  border-radius: 14px;
-  background: #fff;
-  border: 1px solid #e3e6ec;
-  color: #162133;
+  border-radius: 16px;
+  background: #0f1430;
+  color: #fff;
   text-decoration: none;
-  box-shadow: 0 8px 24px rgb(22 33 51 / 6%);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  isolation: isolate;
 }
 
-.spotlight-hero .spotlight-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgb(22 33 51 / 14%);
-}
+.spotlight-hero .spotlight-card.is-large { grid-row: 1 / 3; }
 
+/* media — full-bleed on the large card, tucked bottom-right on the small ones */
 .spotlight-hero .spotlight-media {
-  aspect-ratio: 16 / 9;
+  position: absolute;
+  z-index: 0;
   line-height: 0;
-  background: #ede8f6;
 }
 
-.spotlight-hero .spotlight-media picture,
-.spotlight-hero .spotlight-media img {
+.spotlight-hero .spotlight-card.is-large .spotlight-media { inset: 0; }
+
+.spotlight-hero .spotlight-card.is-large .spotlight-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+.spotlight-hero .spotlight-card.is-large::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgb(8 10 30 / 55%) 0%, rgb(8 10 30 / 15%) 42%, rgb(8 10 30 / 72%) 100%);
+}
+
+.spotlight-hero .spotlight-card:not(.is-large) .spotlight-media {
+  right: 0;
+  bottom: 0;
+  width: 56%;
+  height: 66%;
+}
+
+.spotlight-hero .spotlight-card:not(.is-large) .spotlight-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom right;
+}
+
 .spotlight-hero .spotlight-content {
+  position: relative;
+  z-index: 2;
   display: flex;
-  flex: 1;
   flex-direction: column;
-  gap: 10px;
-  padding: 20px 22px 24px;
+  width: 100%;
+  padding: clamp(24px, 2vw, 34px);
 }
 
 .spotlight-hero .spotlight-eyebrow {
@@ -65,35 +103,45 @@
   font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: #409;
+  color: rgb(255 255 255 / 85%);
 }
 
 .spotlight-hero .spotlight-content h1,
 .spotlight-hero .spotlight-content h2,
 .spotlight-hero .spotlight-content h3,
 .spotlight-hero .spotlight-content h4 {
-  margin: 0;
-  font-size: 19px;
+  margin: 12px 0 0;
   font-weight: 700;
-  line-height: 1.28;
+  line-height: 1.2;
+}
+
+.spotlight-hero .spotlight-card:not(.is-large) .spotlight-content :is(h1, h2, h3, h4) {
+  font-size: clamp(18px, 1.4vw, 22px);
+  max-width: 60%;
+}
+
+.spotlight-hero .spotlight-card.is-large .spotlight-content :is(h1, h2, h3, h4) {
+  font-size: clamp(24px, 2vw, 30px);
+  max-width: 70%;
 }
 
 .spotlight-hero .spotlight-teaser {
-  margin: 0;
+  margin: 12px 0 0;
+  max-width: 54%;
   font-size: 14px;
   line-height: 1.5;
-  color: #4a5568;
-  flex: 1;
+  color: rgb(255 255 255 / 78%);
 }
 
 .spotlight-hero .spotlight-cta {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   margin-top: auto;
+  padding-top: 20px;
   font-size: 14px;
   font-weight: 700;
-  color: #409;
+  color: #fff;
 }
 
 .spotlight-hero .spotlight-cta::after {
@@ -103,7 +151,75 @@
   border-right: 2px solid currentcolor;
   border-bottom: 2px solid currentcolor;
   transform: rotate(-45deg);
-  transition: transform 0.2s ease;
 }
 
-.spotlight-hero .spotlight-card:hover .spotlight-cta::after { transform: translateX(3px) rotate(-45deg); }
+/* ---------------- controls ---------------- */
+.spotlight-hero .spotlight-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--grid-container-width);
+  margin: 22px auto 0;
+}
+
+.spotlight-hero .spotlight-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spotlight-hero .spotlight-seg {
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: #d3d3d9;
+  cursor: pointer;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.spotlight-hero .spotlight-seg.is-active {
+  width: 42px;
+  background: #101a37;
+}
+
+.spotlight-hero .spotlight-nav {
+  display: flex;
+  gap: 12px;
+}
+
+.spotlight-hero .spotlight-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 50%;
+  background: #101a37;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.spotlight-hero .spotlight-arrow:hover { background: #1b2a52; }
+
+.spotlight-hero .spotlight-arrow:disabled {
+  background: #e6e6ea;
+  color: #9aa0b0;
+  cursor: default;
+}
+
+@media (width <= 820px) {
+  .spotlight-hero .spotlight-page {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    min-height: 0;
+    gap: 16px;
+  }
+
+  .spotlight-hero .spotlight-card.is-large { grid-row: auto; }
+  .spotlight-hero .spotlight-card { min-height: 260px; }
+
+  .spotlight-hero .spotlight-content :is(h1, h2, h3, h4),
+  .spotlight-hero .spotlight-teaser { max-width: none; }
+}
