@@ -2,6 +2,19 @@
    "Solutions by industry" section. The grid lives on the shared .block-content
    so the hero's header and tile (display:contents) sit alongside these cards. */
 
+/* the industry-solutions section sits on white */
+.section:has(.industry-tile) { background: #fff; }
+
+/* collapsed: show only the first four tiles (hero + 3) until "Show All" is
+   clicked, which adds .industry-expanded to reveal the rest */
+.block-content:has(.industry-tile) .industry-card ~ .industry-card ~ .industry-card ~ .industry-card {
+  display: none;
+}
+
+.block-content.industry-expanded .industry-card ~ .industry-card ~ .industry-card ~ .industry-card {
+  display: flex;
+}
+
 .block-content:has(.industry-tile) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -12,21 +25,29 @@
   font-family: "DM Sans", montserrat, arial, sans-serif;
 }
 
+/* image on top, white tab with dark text below, drop shadow on the card */
 .industry-tile {
   position: relative;
-  display: block;
-  aspect-ratio: 3 / 4;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border-radius: 14px;
-  background: #2a1350;
-  color: #fff;
-  isolation: isolate;
+  background: #fff;
+  color: #162133;
+  box-shadow: 0 10px 30px rgb(22 33 51 / 10%);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
+.industry-tile:hover {
+  box-shadow: 0 18px 44px rgb(22 33 51 / 16%);
+  transform: translateY(-3px);
+}
+
+/* the image area — the zoom is clipped here so it never leaves the card mask */
 .industry-tile .industry-media {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+  position: relative;
+  aspect-ratio: 16 / 11;
+  overflow: hidden;
   line-height: 0;
 }
 
@@ -38,37 +59,15 @@
   transition: transform 0.5s ease;
 }
 
-.industry-tile::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(180deg, rgb(20 8 40 / 10%) 30%, rgb(20 8 40 / 82%) 100%);
-}
+.industry-tile:hover .industry-media img { transform: scale(1.1); }
 
 .industry-tile h2 {
-  position: absolute;
-  z-index: 2;
-  inset: auto 20px 20px;
   margin: 0;
-  font-size: clamp(18px, 1.5vw, 22px);
+  padding: 18px 20px 22px;
+  font-size: clamp(16px, 1.3vw, 19px);
   font-weight: 700;
-  line-height: 1.2;
-  padding-right: 34px;
-}
-
-/* arrow chip, bottom-right */
-.industry-tile h2::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 2px;
-  width: 9px;
-  height: 9px;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  transform: rotate(-45deg);
-  transition: transform 0.2s ease;
+  line-height: 1.25;
+  color: #162133;
 }
 
 .industry-tile .industry-link {
@@ -77,14 +76,9 @@
   z-index: 3;
 }
 
-.industry-tile:hover .industry-media img { transform: scale(1.06); }
-.industry-tile:hover h2::after { transform: translateX(4px) rotate(-45deg); }
-
 @media (width <= 480px) {
   .block-content:has(.industry-tile) {
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
   }
-
-  .industry-tile h2 { inset: auto 14px 14px; }
 }

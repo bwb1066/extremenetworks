@@ -4,35 +4,49 @@
 
 .industry-card-hero { display: contents; }
 
+/* the CTA drops below every tile (order) and centers, as an outline pill */
 .industry-card-hero .ic-head {
+  order: 1;
   grid-column: 1 / -1;
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 4px;
+  justify-content: center;
+  margin-top: clamp(16px, 2vw, 32px);
   font-family: "DM Sans", montserrat, arial, sans-serif;
 }
 
 .industry-card-hero .ic-showall {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-left: auto;
+  gap: 10px;
+  padding: 13px 30px;
+  border: 1px solid #d9c9f0;
+  border-radius: 999px;
   font-size: 16px;
   font-weight: 700;
   color: #409;
   text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.industry-card-hero .ic-showall:hover {
+  background: #f4eefc;
+  border-color: #409;
 }
 
 .industry-card-hero .ic-showall::after {
   content: "";
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
+  margin-top: -3px;
   border-right: 2px solid currentcolor;
   border-bottom: 2px solid currentcolor;
-  transform: rotate(-45deg);
+  transform: rotate(45deg);
   transition: transform 0.2s ease;
 }
 
-.industry-card-hero a.ic-showall:hover::after { transform: translateX(3px) rotate(-45deg); }
+/* chevron flips up when the full set is shown */
+.industry-card-hero .ic-showall.is-open::after {
+  margin-top: 3px;
+  transform: rotate(-135deg);
+}

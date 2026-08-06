@@ -20,10 +20,12 @@ export default function init(block) {
   // Header row — the "Show All Solutions" CTA (and any authored link).
   const head = el('div', 'ic-head');
   const headCell = rows.find((r) => !r.querySelector('table'));
+  let cta = null;
+  let label = 'Show All Solutions';
   if (headCell) {
-    const label = headCell.textContent.trim() || 'Show All Solutions';
+    label = headCell.textContent.trim() || label;
     const href = headCell.querySelector('a')?.getAttribute('href');
-    const cta = el(href ? 'a' : 'span', 'ic-showall');
+    cta = el(href ? 'a' : 'span', 'ic-showall');
     cta.textContent = label;
     if (href) cta.href = href;
     head.append(cta);
@@ -40,4 +42,19 @@ export default function init(block) {
 
   block.textContent = '';
   block.append(head, tile);
+
+  // Only the first four tiles (this hero + three cards) show until the CTA
+  // reveals the rest. Wire the toggle only when there's more to reveal.
+  const blockContent = block.closest('.block-content');
+  if (cta && blockContent) {
+    const total = blockContent.querySelectorAll('.industry-card').length + 1;
+    if (total > 4) {
+      cta.addEventListener('click', (e) => {
+        e.preventDefault();
+        const expanded = blockContent.classList.toggle('industry-expanded');
+        cta.classList.toggle('is-open', expanded);
+        cta.textContent = expanded ? 'Show Less' : label;
+      });
+    }
+  }
 }
