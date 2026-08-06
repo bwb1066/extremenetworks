@@ -27,17 +27,19 @@ function isAssetUrl(href) {
 }
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const RING_R = 47;
+// viewBox matches the 64px avatar (icon radius 32); the ring sits inside the
+// edge so it reads clearly.
+const RING_R = 27.5;
 
 /* the clock-dial ring that sweeps around the active avatar */
 function progressRing() {
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('class', 'video-avatar-ring');
-  svg.setAttribute('viewBox', '0 0 100 100');
+  svg.setAttribute('viewBox', '0 0 64 64');
   svg.setAttribute('aria-hidden', 'true');
   const circle = document.createElementNS(SVG_NS, 'circle');
-  circle.setAttribute('cx', '50');
-  circle.setAttribute('cy', '50');
+  circle.setAttribute('cx', '32');
+  circle.setAttribute('cy', '32');
   circle.setAttribute('r', String(RING_R));
   svg.append(circle);
   return svg;
@@ -132,7 +134,12 @@ export default function init(block) {
   if (headRow) {
     const cell = headRow.querySelector(':scope > div') || headRow;
     while (cell.firstElementChild) head.append(cell.firstElementChild);
-    head.querySelector('p')?.classList.add('video-viewall');
+    const viewall = head.querySelector('p');
+    if (viewall) {
+      // drop AK's auto button-decoration so it renders as a plain link, not a filled box
+      viewall.className = 'video-viewall';
+      viewall.querySelector('a')?.removeAttribute('class');
+    }
   }
 
   const built = [...block.querySelectorAll(':scope table')]

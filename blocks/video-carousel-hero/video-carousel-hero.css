@@ -33,8 +33,20 @@
 }
 
 .video-carousel-hero .video-viewall a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: #fff;
   text-decoration: none;
+}
+
+.video-carousel-hero .video-viewall a::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+  transform: rotate(-45deg);
 }
 
 .video-carousel-hero .video-viewall a:hover { text-decoration: underline; }
@@ -55,8 +67,8 @@
 
 .video-carousel-hero .video-card {
   position: relative;
-  flex: 0 0 clamp(600px, 66vw, 1040px);
-  min-height: clamp(360px, 34vw, 480px);
+  flex: 0 0 min(820px, 92vw);
+  height: 460px;
   border-radius: 20px;
   overflow: hidden;
   background: #0f1430;
@@ -192,20 +204,21 @@
 /* clock-dial progress ring, only on the active avatar */
 .video-carousel-hero .video-avatar-ring {
   position: absolute;
-  inset: -3px;
-  width: calc(100% + 6px);
-  height: calc(100% + 6px);
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   transform: rotate(-90deg);
 }
 
 .video-carousel-hero .video-avatar-ring circle {
   fill: none;
-  stroke: #7d76f2;
-  stroke-width: 4;
+  stroke: #409;
+  stroke-width: 2;
   stroke-linecap: round;
-  stroke-dasharray: 295.31;
+  stroke-dasharray: 172.79; /* 2π·27.5 */
   stroke-dashoffset: 0;
+  vector-effect: non-scaling-stroke;
 }
 
 .video-carousel-hero .video-avatar:not(.is-active) .video-avatar-ring { display: none; }
@@ -242,12 +255,16 @@
   height: 44px;
   max-width: 70%;
   object-fit: contain;
+
+  /* force the logo to white regardless of its real colours */
+  filter: brightness(0) invert(1);
 }
 
 @media (width <= 760px) {
   .video-carousel-hero .video-card {
-    flex-basis: 88%;
-    min-height: 0;
+    flex-basis: 88vw;
+    height: auto;
+    min-height: 420px;
   }
 
   .video-carousel-hero .video-panel {
