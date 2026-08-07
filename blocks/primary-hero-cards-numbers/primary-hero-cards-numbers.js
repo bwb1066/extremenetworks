@@ -202,6 +202,27 @@ function buildCard(cards, body) {
   cards.append(card);
 }
 
+/* dot indicator for the mobile swipe carousel; tracks the scroller and is
+   hidden on desktop via CSS */
+function buildSwipeDots(scroller, wrap, cls) {
+  const items = [...scroller.children];
+  if (items.length <= 1) return;
+  const dots = el('div', `${cls}-dots`);
+  items.forEach(() => dots.append(el('span', `${cls}-dot`)));
+  wrap.append(dots);
+  const setActive = (i) => [...dots.children].forEach((d, di) => d.classList.toggle('is-active', di === i));
+  setActive(0);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) setActive(items.indexOf(e.target)); });
+    }, { root: scroller, threshold: 0.6 });
+    items.forEach((it) => io.observe(it));
+  }
+  [...dots.children].forEach((d, i) => d.addEventListener('click', () => {
+    items[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }));
+}
+
 function buildStats(stats, row) {
   [...row.children].forEach((cell) => {
     const ps = [...cell.querySelectorAll(':scope > p')];
@@ -236,6 +257,7 @@ export default function init(block) {
     const cardsWrap = el('div', 'phcn-cards-wrap');
     cardsWrap.append(cards);
     block.append(cardsWrap);
+    buildSwipeDots(cards, cardsWrap, 'phcn-cards');
   }
   if (stats.children.length) {
     const statsWrap = el('div', 'phcn-stats-wrap');

@@ -297,38 +297,109 @@
   color: #fff;
 }
 
+/* swipe dots are a mobile-only affordance */
+.primary-hero-cards-numbers .phcn-cards-dots { display: none; }
+
 /* ---------------- Responsive ----------------
-   The six cards hold their row down to ~1150px, then wrap. */
+   The six cards hold their row down to ~1150px, then wrap to three. */
 @media (width <= 1150px) {
   .primary-hero-cards-numbers .phcn-cards { grid-template-columns: repeat(3, 1fr); }
 }
 
-@media (width <= 900px) {
-  .primary-hero-cards-numbers .phcn-cards { margin-top: -32px; }
+/* phone/tablet (matches the header's mobile breakpoint so the two never
+   disagree): hero image on top, product cards swipe, stats stack */
+@media (width <= 1099px) {
+  /* explicit vertical stack so the copy can never overlap the image */
+  .primary-hero-cards-numbers .phcn-hero {
+    display: flex;
+    flex-direction: column;
+  }
 
   .primary-hero-cards-numbers .phcn-hero-bg {
+    order: 0;
+    position: static;
+    display: block;
     width: 100%;
-    opacity: 0.22;
+    height: auto;
+    opacity: 1;
     mask-image: none;
   }
-}
 
-@media (width <= 680px) {
-  .primary-hero-cards-numbers .phcn-cards { grid-template-columns: repeat(2, 1fr); }
-}
+  /* reset BOTH the picture wrapper and the img out of the desktop absolute
+     layout, otherwise the picture stays absolute and floats over the copy */
+  .primary-hero-cards-numbers .phcn-hero-bg picture,
+  .primary-hero-cards-numbers .phcn-hero-bg img {
+    position: static;
+    inset: auto;
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    transform: none;
+  }
 
-@media (width <= 640px) {
+  .primary-hero-cards-numbers .phcn-hero-inner {
+    order: 1;
+    max-width: none;
+    padding: 20px 20px 36px;
+  }
+
+  .primary-hero-cards-numbers .phcn-hero-inner h1,
+  .primary-hero-cards-numbers .phcn-lede { max-width: none; }
+
+  .primary-hero-cards-numbers .phcn-cta { flex-wrap: wrap; }
+
+  /* product cards → horizontal swipe carousel */
+  .primary-hero-cards-numbers .phcn-cards-wrap {
+    max-width: none;
+    padding: 0;
+  }
+
+  .primary-hero-cards-numbers .phcn-cards {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 84%;
+    gap: 16px;
+    margin-top: 0;
+    padding: 0 20px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .primary-hero-cards-numbers .phcn-cards::-webkit-scrollbar { display: none; }
+
+  .primary-hero-cards-numbers .phcn-card {
+    scroll-snap-align: center;
+    height: auto;
+    min-height: 420px;
+  }
+
+  .primary-hero-cards-numbers .phcn-cards-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .primary-hero-cards-numbers .phcn-cards-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 99px;
+    background: rgb(255 255 255 / 35%);
+    cursor: pointer;
+    transition: width 0.3s ease, background-color 0.3s ease;
+  }
+
+  .primary-hero-cards-numbers .phcn-cards-dot.is-active {
+    width: 28px;
+    background: #fff;
+  }
+
   .primary-hero-cards-numbers .phcn-stats {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
+    text-align: left;
   }
-
-  .primary-hero-cards-numbers .phcn-stat + .phcn-stat { border-left: 0; }
-
-  .primary-hero-cards-numbers .phcn-cta {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .primary-hero-cards-numbers .phcn-btn { justify-content: center; }
 }
