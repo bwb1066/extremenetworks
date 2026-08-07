@@ -187,8 +187,18 @@ function buildCard(cards, body) {
   const content = el('div', 'phcn-card-content');
   content.append(...body.children);
 
+  // relevel the authored h3 to h2 so the page has no h1->h3 skip (a11y
+  // heading-order); styling is by class so this is purely semantic
+  let heading = content.querySelector('h1, h2, h3, h4, h5, h6');
+  if (heading && heading.tagName !== 'H2') {
+    const h2 = el('h2');
+    [...heading.attributes].forEach((a) => h2.setAttribute(a.name, a.value));
+    h2.append(...heading.childNodes);
+    heading.replaceWith(h2);
+    heading = h2;
+  }
+
   // inline chevron on the title, matching the live cards
-  const heading = content.querySelector('h3, h2');
   if (heading) {
     const chevron = el('span', 'phcn-card-chevron');
     chevron.setAttribute('aria-hidden', 'true');
