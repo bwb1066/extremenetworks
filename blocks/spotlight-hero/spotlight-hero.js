@@ -156,4 +156,23 @@ export default function init(block) {
   });
   if (pages.length <= 1) controls.style.display = 'none';
   update();
+
+  // Mobile: one card per view via native scroll-snap (desktop paging/transform
+  // is neutralised in CSS). A per-card dot row tracks the track's scroll.
+  if (cards.length > 1) {
+    const mdots = el('div', 'spotlight-mdots');
+    cards.forEach(() => mdots.append(el('span', 'spotlight-mdot')));
+    block.append(mdots);
+    const setActive = (i) => [...mdots.children].forEach((d, di) => d.classList.toggle('is-active', di === i));
+    setActive(0);
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) setActive(cards.indexOf(e.target)); });
+      }, { root: track, threshold: 0.6 });
+      cards.forEach((c) => io.observe(c));
+    }
+    [...mdots.children].forEach((d, i) => d.addEventListener('click', () => {
+      cards[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }));
+  }
 }

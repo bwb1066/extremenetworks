@@ -209,17 +209,58 @@
   cursor: default;
 }
 
+/* per-card mobile dots, hidden on desktop */
+.spotlight-hero .spotlight-mdots { display: none; }
+
+/* phones: one card per view via native scroll-snap (pages dissolve, the
+   desktop transform is overridden) with a per-card dot row */
 @media (width <= 820px) {
-  .spotlight-hero .spotlight-page {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    min-height: 0;
+  .spotlight-hero .spotlight-viewport { max-width: none; }
+
+  .spotlight-hero .spotlight-page { display: contents; }
+
+  .spotlight-hero .spotlight-track {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
     gap: 16px;
+    padding: 0 20px 4px;
+    transform: none !important;
+  }
+
+  .spotlight-hero .spotlight-track::-webkit-scrollbar { display: none; }
+
+  .spotlight-hero .spotlight-card {
+    flex: 0 0 86%;
+    scroll-snap-align: center;
+    min-height: 300px;
   }
 
   .spotlight-hero .spotlight-card.is-large { grid-row: auto; }
-  .spotlight-hero .spotlight-card { min-height: 260px; }
 
   .spotlight-hero .spotlight-content :is(h1, h2, h3, h4),
   .spotlight-hero .spotlight-teaser { max-width: none; }
+
+  .spotlight-hero .spotlight-controls { display: none; }
+
+  .spotlight-hero .spotlight-mdots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px auto 0;
+  }
+
+  .spotlight-hero .spotlight-mdot {
+    width: 8px;
+    height: 8px;
+    border-radius: 99px;
+    background: #cbd0da;
+    cursor: pointer;
+    transition: width 0.3s ease, background-color 0.3s ease;
+  }
+
+  .spotlight-hero .spotlight-mdot.is-active {
+    width: 28px;
+    background: #101a37;
+  }
 }

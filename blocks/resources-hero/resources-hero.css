@@ -139,3 +139,47 @@
 }
 
 .resources-hero .resource-card:hover .resource-cta::after { transform: translateX(3px) rotate(-45deg); }
+
+/* swipe dots are a mobile-only affordance */
+.resources-hero .resources-dots { display: none; }
+
+/* phones: the resource cards become a horizontal swipe carousel with dots */
+@media (width <= 768px) {
+  .resources-hero .resources-grid {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 84%;
+    gap: 16px;
+    max-width: none;
+    margin: 0;
+    padding: 0 20px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .resources-hero .resources-grid::-webkit-scrollbar { display: none; }
+
+  .resources-hero .resource-card { scroll-snap-align: center; }
+
+  .resources-hero .resources-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .resources-hero .resources-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 99px;
+    background: #cbd0da;
+    cursor: pointer;
+    transition: width 0.3s ease, background-color 0.3s ease;
+  }
+
+  .resources-hero .resources-dot.is-active {
+    width: 28px;
+    background: #101a37;
+  }
+}

@@ -262,17 +262,25 @@
 
 @media (width <= 760px) {
   .video-carousel-hero .video-card {
+    display: flex;
+    flex-direction: column;
     flex-basis: 88vw;
     height: auto;
-    min-height: 420px;
+  }
+
+  /* image on top, content stacked below */
+  .video-carousel-hero .video-media {
+    position: relative;
+    inset: auto;
+    height: 220px;
   }
 
   .video-carousel-hero .video-panel {
     position: relative;
     inset: auto;
     width: auto;
-    margin-top: 46%;
     border-radius: 0;
-    background: rgb(9 8 26 / 86%);
+    background: #0d0a24;
+    backdrop-filter: none;
   }
 }

@@ -12,6 +12,26 @@ function el(tag, cls) {
   return node;
 }
 
+/* dot indicator for the mobile swipe carousel; hidden on desktop via CSS */
+function buildSwipeDots(scroller, wrap) {
+  const items = [...scroller.children];
+  if (items.length <= 1) return;
+  const dots = el('div', 'resources-dots');
+  items.forEach(() => dots.append(el('span', 'resources-dot')));
+  wrap.append(dots);
+  const setActive = (i) => [...dots.children].forEach((d, di) => d.classList.toggle('is-active', di === i));
+  setActive(0);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) setActive(items.indexOf(e.target)); });
+    }, { root: scroller, threshold: 0.6 });
+    items.forEach((it) => io.observe(it));
+  }
+  [...dots.children].forEach((d, i) => d.addEventListener('click', () => {
+    items[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }));
+}
+
 function tableBody(table) {
   const body = el('div');
   [...table.querySelectorAll(':scope > tbody > tr')].slice(1).forEach((tr) => {
@@ -104,5 +124,8 @@ export default function init(block) {
 
   block.textContent = '';
   if (head.children.length) block.append(head);
-  if (grid.children.length) block.append(grid);
+  if (grid.children.length) {
+    block.append(grid);
+    buildSwipeDots(grid, block);
+  }
 }
