@@ -620,11 +620,15 @@ header.header button {
     padding: 10px var(--nav-edge);
   }
 
+  /* logo on the left, hamburger on the right */
   .header .nav-toggle {
     display: flex;
     align-items: center;
+    order: 2;
+    margin-left: auto;
     padding: 6px;
-    margin-left: -6px;
+    position: relative;
+    z-index: 3;
     color: var(--nav-text);
   }
 
@@ -632,19 +636,17 @@ header.header button {
     width: 26px;
     height: 26px;
     display: block;
+
+    /* taps land on the button itself, never get swallowed by the icon paths */
+    pointer-events: none;
   }
 
-  /* absolute so the logo is centred on the bar, not on the space left over */
-  .header .brand {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
+  .header .brand { order: 1; }
   .header .brand img { height: 28px; }
 
   .header .primary-nav-list {
     display: none;
+    order: 3;
     flex: 1 0 100%;
     flex-direction: column;
     align-items: stretch;
