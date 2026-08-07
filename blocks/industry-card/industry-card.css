@@ -76,9 +76,52 @@
   z-index: 3;
 }
 
-@media (width <= 480px) {
+/* dots are a mobile-only affordance */
+.industry-dots { display: none; }
+
+/* phones: the tiles become a horizontal swipe carousel with dots */
+@media (width <= 768px) {
   .block-content:has(.industry-tile) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 82%;
+    gap: 16px;
+    max-width: none;
+    margin: 0;
+    padding: 24px 20px 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .block-content:has(.industry-tile)::-webkit-scrollbar { display: none; }
+
+  .industry-tile { scroll-snap-align: center; }
+
+  /* every tile is reachable by swiping, so drop the show-4 collapse */
+  .block-content:has(.industry-tile) .industry-card ~ .industry-card ~ .industry-card ~ .industry-card {
+    display: flex;
+  }
+
+  .section:has(.industry-tile) .industry-dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 4px 20px 32px;
+  }
+
+  .section:has(.industry-tile) .industry-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 99px;
+    background: #cbd0da;
+    cursor: pointer;
+    transition: width 0.3s ease, background-color 0.3s ease;
+  }
+
+  .section:has(.industry-tile) .industry-dot.is-active {
+    width: 24px;
+    background: #101a37;
   }
 }

@@ -50,3 +50,8 @@
   margin-top: 3px;
   transform: rotate(-135deg);
 }
+
+/* on phones the swipe carousel + dots replace the show-all pill */
+@media (width <= 768px) {
+  .industry-card-hero .ic-head { display: none; }
+}

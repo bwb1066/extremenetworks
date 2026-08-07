@@ -57,4 +57,26 @@ export default function init(block) {
       });
     }
   }
+
+  // Mobile swipe dots: the block-content scrolls horizontally on phones, so a
+  // dot per tile tracks it. Placed in the section, below the carousel; hidden
+  // on desktop via CSS.
+  const section = blockContent?.closest('.section');
+  const tiles = blockContent ? [tile, ...blockContent.querySelectorAll('.industry-card')] : [];
+  if (section && blockContent && tiles.length > 1) {
+    const dots = el('div', 'industry-dots');
+    tiles.forEach(() => dots.append(el('span', 'industry-dot')));
+    section.append(dots);
+    const setActive = (i) => [...dots.children].forEach((d, di) => d.classList.toggle('is-active', di === i));
+    setActive(0);
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) setActive(tiles.indexOf(e.target)); });
+      }, { root: blockContent, threshold: 0.6 });
+      tiles.forEach((t) => io.observe(t));
+    }
+    [...dots.children].forEach((d, i) => d.addEventListener('click', () => {
+      tiles[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }));
+  }
 }
