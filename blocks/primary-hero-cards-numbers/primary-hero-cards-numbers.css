@@ -336,8 +336,10 @@
     height: auto;
     object-fit: contain;
     object-position: center;
-    transform: none;
   }
+
+  /* nudge the image down (transform, so the copy below doesn't move) */
+  .primary-hero-cards-numbers .phcn-hero-bg img { transform: translateY(104px); }
 
   .primary-hero-cards-numbers .phcn-hero-inner {
     order: 1;
